@@ -1,0 +1,140 @@
+services:
+  frontend:
+    image: eintoast/mariokart_frontend:latest
+    ports:
+      - "8080:5000"
+    # expose:
+      - "5000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    environment:
+      REACT_APP_BACKEND_PROTOCOL: http
+      REACT_APP_BACKEND_URL: localhost
+      REACT_APP_BACKEND_PORT: 3000
+      REACT_APP_BACKEND_PATH: api
+      REACT_APP_BACKEND_WS_PROTOCOL: http
+      REACT_APP_BACKEND_WS_URL: localhost
+      REACT_APP_BACKEND_WS_PORT: 3000
+      REACT_APP_BACKEND_WS_PATH: api/ws
+      VIRTUAL_HOST: https://mariokart.ein-toast.de
+      # VIRTUAL_PORT: 5000
+      # LETSENCRYPT_HOST: mariokart.ein-toast.de
+      TZ: Europe/Berlin
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # Host-Zeit einbinden
+      - /etc/timezone:/etc/timezone:ro    # Host-Zeitzone einbinden
+
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 60s
+        max_failure_ratio: 0.1
+        order: start-first
+  backend:
+    image: eintoast/mariokart_backend:latest
+    ports:
+      - "3000:8080"
+    # expose:
+    #   - "8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      matchplan:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/public/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      USER_NAME: test
+      USER_PASSWORD: test
+      SECRET_KEY: test
+      DB_HOST: db
+      DB_USER: test
+      DB_PORT: 5432
+      DB_PASSWORD: test
+      DB_NAME: test
+      MATCHPLAN_PROTOCOL: http
+      MATCHPLAN_HOST: matchplan
+      MATCHPLAN_PORT: 8000
+      DOMAIN: http://localhost:8080
+      VIRTUAL_HOST: https://mariokart.ein-toast.de/api
+      # VIRTUAL_PORT: 8080
+      # LETSENCRYPT_HOST: mariokart.ein-toast.de
+      TZ: Europe/Berlin
+    volumes:
+      - /etc/localtime:/etc/localtime:ro  # Host-Zeit einbinden
+      - /etc/timezone:/etc/timezone:ro    # Host-Zeitzone einbinden
+
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 60s
+        max_failure_ratio: 0.1
+        order: start-first
+  matchplan:
+    image: eintoast/mariokart_matchplan:latest
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 60s
+        max_failure_ratio: 0.1
+        order: start-first
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: test
+      POSTGRES_DB: test
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 60s
+        max_failure_ratio: 0.1
+        order: start-first
+
+networks:
+  backend:
+  frontend:
+
+volumes:
+  postgres_data:
