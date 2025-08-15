@@ -48,7 +48,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      matchplan:
+      schedule:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/api/public/healthcheck"]
@@ -66,9 +66,9 @@ services:
       DB_PORT: 5432
       DB_PASSWORD: test
       DB_NAME: test
-      MATCHPLAN_PROTOCOL: http
-      MATCHPLAN_HOST: matchplan
-      MATCHPLAN_PORT: 8000
+      SCHEDULE_PROTOCOL: http
+      SCHEDULE_HOST: schedule
+      SCHEDULE_PORT: 8000
       DOMAIN: http://localhost:8080
       VIRTUAL_HOST: https://mariokart.ein-toast.de/api
       # VIRTUAL_PORT: 8080
@@ -86,8 +86,8 @@ services:
         monitor: 60s
         max_failure_ratio: 0.1
         order: start-first
-  matchplan:
-    image: eintoast/mariokart_matchplan:latest
+  schedule:
+    image: eintoast/mariokart_schedule:latest
     ports:
       - "8000:8000"
     healthcheck:
