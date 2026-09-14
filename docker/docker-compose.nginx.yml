@@ -1,0 +1,11 @@
+services:
+  nginx:
+    image: mesudip/nginx-proxy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/ssl:/etc/ssl
+      - /etc/nginx/dhparam:/etc/nginx/dhparam
+      - /var/log/nginx:/var/log/nginx
