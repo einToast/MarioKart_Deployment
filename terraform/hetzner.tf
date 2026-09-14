@@ -3,8 +3,8 @@ locals {
 }
 
 resource "hcloud_ssh_key" "hetzner_mkt_ssh_key" {
-    name       = "hetzner_mkt_ssh_key"
-    public_key = file(var.ssh_public_key_path)
+  name       = "hetzner_mkt_ssh_key"
+  public_key = file(var.ssh_public_key_path)
 }
 
 resource "null_resource" "hetzner_mkt_upload_and_deploy" {
@@ -41,59 +41,59 @@ resource "null_resource" "hetzner_mkt_upload_and_deploy" {
 }
 
 resource "hcloud_firewall" "hetzner_mkt_fire" {
-    name = "web-firewall"
-    rule {
-        direction = "in"
-        protocol  = "icmp"
-        source_ips = [
-        "0.0.0.0/0",
-        "::/0"
-        ]
-    }
+  name = "web-firewall"
+  rule {
+    direction = "in"
+    protocol  = "icmp"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 
-    rule {
-        direction = "in"
-        protocol  = "tcp"
-        port      = "22"
-        source_ips = [
-        "0.0.0.0/0",
-        "::/0"
-        ]
-    }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "22"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 
-    rule {
-        direction = "in"
-        protocol = "tcp"
-        port = "80"
-        source_ips = [
-            "0.0.0.0/0",
-            "::/0"
-        ]
-    }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "80"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 
-    rule {
-        direction = "in"
-        protocol = "tcp"
-        port = "443"
-        source_ips = [
-          "0.0.0.0/0",
-          "::/0"
-        ]
-    }
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "443"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
 
 }
 
 resource "hcloud_server" "hetzner_mkt_server" {
-    name        = "my-server"
-    image       = "ubuntu-24.04"
-    server_type = "cx23"
-    location    = "nbg1"
-    ssh_keys    = [hcloud_ssh_key.hetzner_mkt_ssh_key.id]
-    keep_disk   = true 
-    user_data = file("${path.module}/cloud-init.yml")
-    firewall_ids = [hcloud_firewall.hetzner_mkt_fire.id]
+  name         = "my-server"
+  image        = "ubuntu-24.04"
+  server_type  = "cx23"
+  location     = "nbg1"
+  ssh_keys     = [hcloud_ssh_key.hetzner_mkt_ssh_key.id]
+  keep_disk    = true
+  user_data    = file("${path.module}/cloud-init.yml")
+  firewall_ids = [hcloud_firewall.hetzner_mkt_fire.id]
 }
 
 output "ip" {
-    value = hcloud_server.hetzner_mkt_server.ipv4_address
+  value = hcloud_server.hetzner_mkt_server.ipv4_address
 }

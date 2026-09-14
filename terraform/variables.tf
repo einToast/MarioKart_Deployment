@@ -14,13 +14,13 @@ variable "ssh_private_key_path" {
 }
 
 variable "ssh_public_key_path" {
-  type      = string
+  type = string
 }
 
 variable "mkt_url" {
-  type      = string
+  type = string
 }
 
 variable "portainer_url" {
-  type      = string
+  type = string
 }

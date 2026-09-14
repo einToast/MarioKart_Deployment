@@ -11,12 +11,12 @@ terraform {
     }
 
     null = {
-        source = "hashicorp/null"
-        version = "~> 3.2.4"
+      source  = "hashicorp/null"
+      version = "~> 3.2.4"
     }
 
     time = {
-      source = "hashicorp/time"
+      source  = "hashicorp/time"
       version = "~> 0.13.1"
     }
 
@@ -32,9 +32,9 @@ provider "cloudflare" {
 }
 
 provider "null" {
-  
+
 }
 
 provider "time" {
-  
+
 }
