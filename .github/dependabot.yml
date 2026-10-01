@@ -19,3 +19,9 @@ updates:
     directory: "/terraform"
     schedule:
       interval: "daily"
+
+  - package-ecosystem: "devcontainers"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 10
