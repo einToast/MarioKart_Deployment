@@ -6,12 +6,6 @@ services:
     depends_on:
       backend:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
     environment:
       REACT_APP_BACKEND_PROTOCOL: ${BACKEND_API_PROTOCOL}
       REACT_APP_BACKEND_URL: ${BACKEND_API_HOST}
@@ -26,7 +20,6 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro  # integrate host time
       - /etc/timezone:/etc/timezone:ro    # integrate host timezone
-
     deploy:
       update_config:
         parallelism: 1
@@ -35,6 +28,7 @@ services:
         monitor: 60s
         max_failure_ratio: 0.1
         order: start-first
+
   backend:
     image: eintoast/mariokart_backend:latest
     ports:
@@ -44,12 +38,8 @@ services:
         condition: service_healthy
       schedule:
         condition: service_healthy
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/api/public/healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
+      ocr:
+        condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
       USER_NAME: ${USER_NAME}
@@ -72,7 +62,6 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro  # integrate host time
       - /etc/timezone:/etc/timezone:ro    # integrate host timezone
-
     deploy:
       update_config:
         parallelism: 1
@@ -81,16 +70,30 @@ services:
         monitor: 60s
         max_failure_ratio: 0.1
         order: start-first
+
   schedule:
     image: eintoast/mariokart_schedule:latest
     ports:
       - "${SCHEDULE_PORT}:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 10s
+    deploy:
+      update_config:
+        parallelism: 1
+        delay: 10s
+        failure_action: rollback
+        monitor: 60s
+        max_failure_ratio: 0.1
+        order: start-first
+  ocr:
+    image: eintoast/mariokart_ocr:latest
+    ports:
+      - "${OCR_PORT}:8001"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+    
     deploy:
       update_config:
         parallelism: 1
