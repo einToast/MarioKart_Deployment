@@ -24,3 +24,7 @@ variable "mkt_url" {
 variable "portainer_url" {
   type = string
 }
+
+variable "grafana_url" {
+  type = string
+}
