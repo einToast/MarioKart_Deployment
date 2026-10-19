@@ -1,0 +1,10 @@
+apiVersion: 1
+
+providers:
+  - name: server
+    folder: Server
+    type: file
+    disableDeletion: true
+    allowUiUpdates: false
+    options:
+      path: /etc/grafana/dashboards
