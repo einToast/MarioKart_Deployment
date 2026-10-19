@@ -14,10 +14,14 @@ This repo contains two folders:
 ```
 Internet ──> :80/:443 ──> nginx-proxy ──┬─> frontend  (React)         https://<mkt_url>
                                         ├─> backend   (Spring Boot)   https://<mkt_url>/api
-                                        └─> portainer                 https://<portainer_url>
+                                        ├─> portainer                 https://<portainer_url>
+                                        └─> grafana                   https://<grafana_url>
 
 backend ──> db (Postgres)
         └─> schedule (match planning service)
+
+grafana ──> prometheus <── node-exporter (host), cadvisor (containers)
+        └─> loki       <── alloy (container logs, host journal, nginx logs)
 ```
 
 [nginx-proxy](https://github.com/mesudip/nginx-proxy) watches the Docker socket and configures routing (and TLS certificates) from each container's `VIRTUAL_HOST` variable. No manual nginx configuration is needed.
@@ -30,7 +34,7 @@ The files in `docker/` are combined at deploy time:
 |------|----------|
 | `docker-compose.mariokart.yml` | `frontend`, `backend`, `schedule`, `db`. Images are pulled from Docker Hub (`eintoast/mariokart_*:latest`, `postgres:latest`). |
 | `docker-compose.nginx.yml` | `nginx` reverse proxy. Owns ports 80 and 443. |
-| `docker-compose.management.yml` | `portainer` for container management. |
+| `docker-compose.management.yml` | `portainer` for container management, and the monitoring stack: `grafana`, `prometheus`, `node-exporter`, `cadvisor`, `loki`, `alloy`. |
 
 Startup order is enforced by health checks. `backend` waits for `db` and `schedule`, and `frontend` waits for `backend`.
 
@@ -51,7 +55,8 @@ cp .env.example .env
 | API URLs (used by the frontend) | `BACKEND_API_*`, `BACKEND_WS_*` | Protocol, host, port and path of the REST API and the WebSocket, as seen from the user's browser. |
 | Schedule | `SCHEDULE_PROTOCOL`, `SCHEDULE_HOST`, `SCHEDULE_PORT` | Internal address used by the backend. Keep `SCHEDULE_HOST=schedule`. |
 | Database | `POSTGRES_HOST`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PORT` | Keep `POSTGRES_HOST=db`. |
-| Reverse proxy | `FRONTEND_VIRTUAL_HOST`, `BACKEND_VIRTUAL_HOST`, `PORTAINER_VIRTUAL_HOST` | Public URLs that nginx-proxy routes. Portainer uses the `-> :9000` suffix to select its container port. |
+| Reverse proxy | `FRONTEND_VIRTUAL_HOST`, `BACKEND_VIRTUAL_HOST`, `PORTAINER_VIRTUAL_HOST`, `GRAFANA_VIRTUAL_HOST` | Public URLs that nginx-proxy routes. Portainer and Grafana use the `-> :9000` / `-> :3000` suffix to select their container port. |
+| Management | `PORTAINER_ADMIN_PASSWORD`, `GRAFANA_ADMIN_USER`, `GRAFANA_ADMIN_PASSWORD`, `GRAFANA_ROOT_URL` | Admin logins are created on first start only. Portainer needs a password of at least 12 characters. |
 
 env files :
 
@@ -79,6 +84,7 @@ ssh_public_key_path  = "~/.ssh/id_ed25519.pub"
 ssh_private_key_path = "~/.ssh/id_ed25519"
 mkt_url              = "mariokart.example.com"
 portainer_url        = "portainer.mariokart.example.com"
+grafana_url          = "grafana.mariokart.example.com"
 ```
 
 Then run:
@@ -94,7 +100,7 @@ This does the following:
 
 1. Creates the SSH key, a firewall (ICMP and TCP 22/80/443 open) and a `cx23` Ubuntu 24.04 server in `nbg1`.
 2. Installs Docker CE on first boot via `cloud-init.yml`.
-3. Creates `A` records in Cloudflare for `mkt_url` and `portainer_url` that point at the server. The zone is derived from `mkt_url` by dropping its first label, so `mariokart.example.com` uses the zone `example.com`.
+3. Creates `A` records in Cloudflare for `mkt_url`, `portainer_url` and `grafana_url` that point at the server. The zone is derived from `mkt_url` by dropping its first label, so `mariokart.example.com` uses the zone `example.com`.
 4. Uploads `docker/` to `/opt/app` over SSH and runs `deploy_docker.sh`.
 
 If you change anything in `docker/`, run `terraform apply` again to re-upload and redeploy.
