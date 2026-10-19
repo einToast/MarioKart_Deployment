@@ -8,7 +8,7 @@ resource "hcloud_ssh_key" "hetzner_mkt_ssh_key" {
 }
 
 resource "null_resource" "hetzner_mkt_upload_and_deploy" {
-  depends_on = [hcloud_server.hetzner_mkt_server, cloudflare_dns_record.cloudflare_mkt_dns_record, cloudflare_dns_record.cloudflare_portainer_dns_record]
+  depends_on = [hcloud_server.hetzner_mkt_server, cloudflare_dns_record.cloudflare_mkt_dns_record, cloudflare_dns_record.cloudflare_portainer_dns_record, cloudflare_dns_record.cloudflare_grafana_dns_record]
 
   triggers = {
     deploy_hash = sha1(join("", [

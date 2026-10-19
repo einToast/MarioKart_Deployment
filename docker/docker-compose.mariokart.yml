@@ -1,8 +1,6 @@
 services:
   frontend:
     image: eintoast/mariokart_frontend:latest
-    ports:
-      - "${FRONTEND_PORT}:5000"
     depends_on:
       backend:
         condition: service_healthy
@@ -16,23 +14,10 @@ services:
       REACT_APP_BACKEND_WS_PORT: ${BACKEND_WS_PORT}
       REACT_APP_BACKEND_WS_PATH: ${BACKEND_WS_PATH}
       VIRTUAL_HOST: ${FRONTEND_VIRTUAL_HOST}
-      TZ: ${TZ}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro  # integrate host time
-      - /etc/timezone:/etc/timezone:ro    # integrate host timezone
-    deploy:
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-        monitor: 60s
-        max_failure_ratio: 0.1
-        order: start-first
+    restart: always
 
   backend:
     image: eintoast/mariokart_backend:latest
-    ports:
-      - "${BACKEND_PORT}:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -62,49 +47,21 @@ services:
       DOMAIN: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
       VIRTUAL_HOST: ${BACKEND_VIRTUAL_HOST}
       TZ: ${TZ}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro  # integrate host time
-      - /etc/timezone:/etc/timezone:ro    # integrate host timezone
-    deploy:
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-        monitor: 60s
-        max_failure_ratio: 0.1
-        order: start-first
+    restart: always
 
   schedule:
     image: eintoast/mariokart_schedule:latest
-    ports:
-      - "${SCHEDULE_PORT}:8000"
-    deploy:
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-        monitor: 60s
-        max_failure_ratio: 0.1
-        order: start-first
+    restart: always
+
   ocr:
     image: eintoast/mariokart_ocr:latest
-    ports:
-      - "${OCR_PORT}:8001"
     environment:
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
-    
-    deploy:
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-        monitor: 60s
-        max_failure_ratio: 0.1
-        order: start-first
+    restart: always
 
   db:
     image: postgres:latest
@@ -112,8 +69,6 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - "${POSTGRES_PORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
 
@@ -123,15 +78,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
-
-    deploy:
-      update_config:
-        parallelism: 1
-        delay: 10s
-        failure_action: rollback
-        monitor: 60s
-        max_failure_ratio: 0.1
-        order: start-first
+    restart: always
 
 volumes:
   postgres_data:
