@@ -8,12 +8,12 @@ updates:
   - package-ecosystem: "docker-compose" # See documentation for possible values
     directory: "/docker" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "weekly"
   
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     groups:
       codeql-action:
         patterns:
@@ -22,10 +22,10 @@ updates:
   - package-ecosystem: "terraform"
     directory: "/terraform"
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   - package-ecosystem: "devcontainers"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     open-pull-requests-limit: 10
