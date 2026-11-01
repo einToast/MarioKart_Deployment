@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: mesudip/nginx-proxy:latest
+    image: mesudip/nginx-proxy:v3.3.0
     ports:
       - "80:80"
       - "443:443"

@@ -1,6 +1,6 @@
 services:
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.45.3
     command:
       - -H
       - unix:///var/run/docker.sock
@@ -19,7 +19,7 @@ services:
     restart: always
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.3.0
     expose:
       - "3000"
     depends_on:
@@ -46,7 +46,7 @@ services:
     restart: always
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.15.1
     expose:
       - "9090"
     command:
@@ -62,7 +62,7 @@ services:
     restart: always
 
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.12.1
     command:
       - --path.rootfs=/host
       - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker/.+)($$|/)
@@ -74,10 +74,10 @@ services:
     restart: always
 
   cadvisor:
-    image: ghcr.io/google/cadvisor:latest
+    image: ghcr.io/google/cadvisor:v0.60.6
     command:
       - --docker_only=true
-      - --housekeeping_interval=15s
+      - --housekeeping_interval=30s
       - --store_container_labels=false
       - --whitelisted_container_labels=com.docker.compose.service,com.docker.compose.project
       - --disable_metrics=percpu,sched,tcp,udp,advtcp,hugetlb,referenced_memory,cpu_topology,resctrl,memory_numa,perf_event,process
@@ -96,7 +96,7 @@ services:
     restart: always
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.9
     expose:
       - "3100"
     command:
@@ -108,7 +108,7 @@ services:
     restart: always
 
   alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:v1.21.3
     expose:
       - "12345"
     command:
