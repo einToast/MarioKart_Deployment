@@ -55,7 +55,7 @@ cp .env.example .env
 | API URLs (used by the frontend) | `BACKEND_API_*`, `BACKEND_WS_*` | Protocol, host, port and path of the REST API and the WebSocket, as seen from the user's browser. |
 | Schedule | `SCHEDULE_PROTOCOL`, `SCHEDULE_HOST`, `SCHEDULE_PORT` | Internal address used by the backend. Keep `SCHEDULE_HOST=schedule`. |
 | Database | `POSTGRES_HOST`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PORT` | Keep `POSTGRES_HOST=db`. |
-| Reverse proxy | `FRONTEND_VIRTUAL_HOST`, `BACKEND_VIRTUAL_HOST`, `PORTAINER_VIRTUAL_HOST`, `GRAFANA_VIRTUAL_HOST` | Public URLs that nginx-proxy routes. Portainer and Grafana use the `-> :9000` / `-> :3000` suffix to select their container port. |
+| Reverse proxy | `FRONTEND_VIRTUAL_HOST`, `BACKEND_VIRTUAL_HOST`, `PORTAINER_VIRTUAL_HOST`, `GRAFANA_VIRTUAL_HOST` | Public URLs that nginx-proxy routes. Portainer and Grafana use the `-> :9000` / `-> :3000` suffix to select their container port. The backend needs the `https+wss://` scheme, otherwise nginx-proxy does not forward the WebSocket upgrade. |
 | Management | `PORTAINER_ADMIN_PASSWORD`, `GRAFANA_ADMIN_USER`, `GRAFANA_ADMIN_PASSWORD`, `GRAFANA_ROOT_URL` | Admin logins are created on first start only. Portainer needs a password of at least 12 characters. |
 
 env files :
