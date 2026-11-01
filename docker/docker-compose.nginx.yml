@@ -9,4 +9,5 @@ services:
       - /etc/ssl:/etc/ssl
       - /etc/nginx/dhparam:/etc/nginx/dhparam
       - /var/log/nginx:/var/log/nginx
+    mem_limit: 256m
     restart: always

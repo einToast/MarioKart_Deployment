@@ -14,6 +14,7 @@ services:
       REACT_APP_BACKEND_WS_PORT: ${BACKEND_WS_PORT}
       REACT_APP_BACKEND_WS_PATH: ${BACKEND_WS_PATH}
       VIRTUAL_HOST: ${FRONTEND_VIRTUAL_HOST}
+    mem_limit: 128m
     restart: always
 
   backend:
@@ -47,10 +48,13 @@ services:
       DOMAIN: ${FRONTEND_PROTOCOL}://${FRONTEND_HOST}
       VIRTUAL_HOST: ${BACKEND_VIRTUAL_HOST}
       TZ: ${TZ}
+      JAVA_TOOL_OPTIONS: -XX:MaxRAMPercentage=75 -XX:+ExitOnOutOfMemoryError
+    mem_limit: 768m
     restart: always
 
   schedule:
     image: eintoast/mariokart_schedule:latest
+    mem_limit: 256m
     restart: always
 
   ocr:
@@ -61,6 +65,7 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
       MISTRAL_API_KEY: ${MISTRAL_API_KEY}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY}
+    mem_limit: 640m
     restart: always
 
   db:
@@ -78,6 +83,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    mem_limit: 512m
     restart: always
 
 volumes:
