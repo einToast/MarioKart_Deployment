@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: mesudip/nginx-proxy:latest
+    image: mesudip/nginx-proxy:v3.3.0
     ports:
       - "80:80"
       - "443:443"
@@ -9,4 +9,5 @@ services:
       - /etc/ssl:/etc/ssl
       - /etc/nginx/dhparam:/etc/nginx/dhparam
       - /var/log/nginx:/var/log/nginx
+    mem_limit: 256m
     restart: always

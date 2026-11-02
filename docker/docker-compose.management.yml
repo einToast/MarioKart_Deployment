@@ -1,6 +1,6 @@
 services:
   portainer:
-    image: portainer/portainer-ce:latest
+    image: portainer/portainer-ce:2.45.3
     command:
       - -H
       - unix:///var/run/docker.sock
@@ -15,10 +15,11 @@ services:
       - portainer_admin_password
     environment:
       VIRTUAL_HOST: ${PORTAINER_VIRTUAL_HOST}
+    mem_limit: 128m
     restart: always
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:13.3.0
     expose:
       - "3000"
     depends_on:
@@ -41,11 +42,11 @@ services:
       GOMEMLIMIT: 300MiB
       VIRTUAL_HOST: ${GRAFANA_VIRTUAL_HOST}
       TZ: ${TZ}
-    mem_limit: 512m
+    mem_limit: 384m
     restart: always
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v3.15.1
     expose:
       - "9090"
     command:
@@ -57,10 +58,11 @@ services:
       - prometheus_data:/prometheus
     extra_hosts:
       - host.docker.internal:host-gateway
+    mem_limit: 256m
     restart: always
 
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.12.1
     command:
       - --path.rootfs=/host
       - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker/.+)($$|/)
@@ -68,13 +70,14 @@ services:
     pid: host
     volumes:
       - /:/host:ro,rslave
+    mem_limit: 64m
     restart: always
 
   cadvisor:
-    image: ghcr.io/google/cadvisor:latest
+    image: ghcr.io/google/cadvisor:v0.60.6
     command:
       - --docker_only=true
-      - --housekeeping_interval=15s
+      - --housekeeping_interval=30s
       - --store_container_labels=false
       - --whitelisted_container_labels=com.docker.compose.service,com.docker.compose.project
       - --disable_metrics=percpu,sched,tcp,udp,advtcp,hugetlb,referenced_memory,cpu_topology,resctrl,memory_numa,perf_event,process
@@ -89,10 +92,11 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker/:/var/lib/docker:ro
       - /dev/disk/:/dev/disk:ro
+    mem_limit: 128m
     restart: always
 
   loki:
-    image: grafana/loki:latest
+    image: grafana/loki:3.7.9
     expose:
       - "3100"
     command:
@@ -100,10 +104,11 @@ services:
     volumes:
       - ./monitoring/loki/loki.yml:/etc/loki/loki.yml:ro
       - loki_data:/loki
+    mem_limit: 256m
     restart: always
 
   alloy:
-    image: grafana/alloy:latest
+    image: grafana/alloy:v1.21.3
     expose:
       - "12345"
     command:
@@ -121,6 +126,7 @@ services:
       - /run/log/journal:/run/log/journal:ro
       - /etc/machine-id:/etc/machine-id:ro
       - /var/log/nginx:/var/log/nginx:ro
+    mem_limit: 128m
     restart: always
 
 secrets:
