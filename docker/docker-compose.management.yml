@@ -19,7 +19,7 @@ services:
     restart: always
 
   grafana:
-    image: grafana/grafana:13.3.0
+    image: grafana/grafana:13.3.1
     expose:
       - "3000"
     depends_on:
@@ -74,7 +74,7 @@ services:
     restart: always
 
   cadvisor:
-    image: ghcr.io/google/cadvisor:v0.60.6
+    image: ghcr.io/google/cadvisor:v0.61.0
     command:
       - --docker_only=true
       - --housekeeping_interval=30s
@@ -96,7 +96,7 @@ services:
     restart: always
 
   loki:
-    image: grafana/loki:3.7.9
+    image: grafana/loki:3.7.10
     expose:
       - "3100"
     command:
@@ -108,7 +108,7 @@ services:
     restart: always
 
   alloy:
-    image: grafana/alloy:v1.21.3
+    image: grafana/alloy:v1.22.0
     expose:
       - "12345"
     command:
