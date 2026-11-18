@@ -9,6 +9,14 @@ updates:
     directory: "/docker" # Location of package manifests
     schedule:
       interval: "weekly"
+    groups:
+      docker-minor:
+          patterns:
+            - "*"
+          update-types:
+            - "minor"
+            - "patch"
+
   
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -18,14 +26,34 @@ updates:
       codeql-action:
         patterns:
           - "github/codeql-action*"
+      actions-minor:
+          patterns:
+            - "*"
+          update-types:
+            - "minor"
+            - "patch"
 
   - package-ecosystem: "terraform"
     directory: "/terraform"
     schedule:
       interval: "weekly"
+    groups:
+      terraform-minor:
+          patterns:
+            - "*"
+          update-types:
+            - "minor"
+            - "patch"
 
   - package-ecosystem: "devcontainers"
     directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    groups:
+      devcontainers-minor:
+          patterns:
+            - "*"
+          update-types:
+            - "minor"
+            - "patch"
