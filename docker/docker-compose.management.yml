@@ -96,7 +96,7 @@ services:
     restart: always
 
   loki:
-    image: grafana/loki:3.7.9
+    image: grafana/loki:3.7.10
     expose:
       - "3100"
     command:
