@@ -1,6 +1,6 @@
 services:
   portainer:
-    image: portainer/portainer-ce:2.45.3
+    image: portainer/portainer-ce:2.45.4
     command:
       - -H
       - unix:///var/run/docker.sock
@@ -62,7 +62,7 @@ services:
     restart: always
 
   node-exporter:
-    image: prom/node-exporter:v1.12.1
+    image: prom/node-exporter:v1.13.1
     command:
       - --path.rootfs=/host
       - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|run|var/lib/docker/.+)($$|/)
@@ -74,7 +74,7 @@ services:
     restart: always
 
   cadvisor:
-    image: ghcr.io/google/cadvisor:v0.61.0
+    image: ghcr.io/google/cadvisor:v0.61.1
     command:
       - --docker_only=true
       - --housekeeping_interval=30s
